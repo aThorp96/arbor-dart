@@ -21,15 +21,17 @@ Future<Client> startClient(String username, String address, int port) async {
 }
 
 String buffer = "";
-bool handleIncoming(List<int> input) {
+/// handleIncoming uses the buffer to ensure JSONs are completely recieved before they're
+/// decoded.
+///
+/// @param input: the raw byte data recieved over the TLS connection
+void handleIncoming(List<int> input) {
     buffer = buffer + String.fromCharCodes(input);
     while (buffer.length > 0 && buffer.contains("\n")) {
         int messageEnd = buffer.indexOf("\n");
         String messageRaw = buffer.substring(0, messageEnd);
         buffer = buffer.substring(messageEnd + 1, buffer.length);
-        print(messageRaw);
-        print("Buffer: $buffer");
-        print("");
+        print(messageRaw + "\n"); // Do something with complete JSON
     }
 }
 
